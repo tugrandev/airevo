@@ -64,6 +64,7 @@ Accessibility/language: English v1, left-to-right; WCAG AA where feasible.
 - Optional NRT/medication tracking (informational, not prescriptive).
 - Notifications & reminders (time-of-day, event-based, milestone-based).
 - Data export and privacy controls.
+- Optional subscription upsell during onboarding (if monetization is enabled in v1).
 
 Out-of-scope v1: live chat coaching, 1:1 telehealth, multi-device web app.
 
@@ -71,42 +72,49 @@ Out-of-scope v1: live chat coaching, 1:1 telehealth, multi-device web app.
 
 ## 7) Detailed Features & Requirements
 
-### 7.1 Onboarding & Assessment (Long, Personalized)
-Objectives: capture baseline, personalize plan, build motivation.
+### 7.1 Onboarding & Assessment (Phased, Personalized)
+Objectives: capture baseline, personalize plan, build motivation, and create a supportive commitment — while feeling conversational, not like a survey.
 
-Required screens/sections:
-- Welcome & consent
-  - Explain non-medical disclaimer
-  - Optional marketing consent
-- Account creation (email + password or Apple/Google; guest mode allowed in v1; upsell sign-in for sync)
-- Baseline smoking profile
-  - Age started, years smoking
-  - Cigarettes/day (or week), preferred brand/pack price
-  - Time to first cigarette after waking (Heaviness of Smoking Index)
-  - Morning craving score (1-10)
-- Dependence & history
-  - Previous quit attempts (count, longest abstinence, what helped/hurt)
-  - Withdrawal symptoms historically
-- Triggers & contexts (multi-select + free-text)
-  - Stress, coffee, alcohol, after meals, driving, social, boredom, specific times
-- Motivation & goals
-  - Top reasons (health, money, family, performance, smell)
-  - Readiness & confidence (scales 0-10)
-- Health & support
-  - Comorbidities (anxiety/depression self-report), current medications (optional)
-  - Household smokers, social support availability
-- Quit date selection
-  - Recommend within next 2 weeks; allow immediate quit today
-  - Offer gradual reduction plan if not ready (optional path)
-- NRT/medication info (optional)
-  - Informational guidance only; user can track patches/gum/lozenges
-- Personalization summary
-  - Show tailored plan preview; allow edit
+Phased flow:
+- Phase 1: Welcome & Initial Engagement
+  - Welcome Screen: mission, benefits, "Get Started" CTA
+  - Value Proposition & Benefits (optional): 2-3 cards; "Personalized Plans", "Track Progress"
+  - Get to Know You – Name: text input, then greet by name going forward
+
+- Phase 2: Data Collection & Assessment
+  - Smoking History – First Cigarette Age: number picker/slider
+  - Current Smoking – Frequency: cigarettes/day number picker/slider
+  - Triggers: multi-select (stress, after meals, coffee, social, boredom, habit, custom)
+  - Motivation for Quitting: multi-select + custom
+  - Previous Quit Attempts: yes/no; if yes, follow-up on challenges (multi-select or text)
+  - Support System: yes/no
+  - Health Information (optional): multi-select health concerns + prefer not to say
+  - Demographics (optional): gender; age range
+
+- Phase 3: Goal Setting & Commitment
+  - Set Quit Date: date picker (recommend 1–2 weeks out; allow today)
+  - Personalized Goals & Milestones: select suggestions + custom (e.g., reduce by X, go X hours)
+  - Commitment Statement (Digital Pledge): confirm pledge with name and quit date
+  - Pre-Quit Preparations: simple tasks (tell a friend, remove ashtrays)
+
+- Phase 4: Personalization & Initial Setup
+  - Notification Preferences: frequency and/or preferred times; quiet hours
+  - App Permissions: request push permission with clear value explanation
+
+- Phase 5: Subscription & Access (optional)
+  - Personalized Plan Preview: show tailored highlights based on answers
+  - Subscription Options: tiers (Monthly/Annual) and trial if applicable
+  - Account Creation/Login: email or Apple/Google; allow guest mode if no subscription
+
+- Phase 6: First Steps & Dashboard
+  - Initial Dashboard View: welcome by name, countdown to quit date, first suggested task
 
 Form/UX requirements:
-- Progress indicator; save and resume
-- Plain language; tooltips for sensitive items
-- Skippable with defaults but encourage completion
+- Autosave at each step; resume onboarding anytime
+- Skippable optional sections with sensible defaults
+- Use name in copy throughout; dynamic branching based on answers
+- Validation with friendly errors; progress indicator
+- Works offline; queues sync when online
 
 ### 7.2 Dashboard (Home)
 - Header: days smoke-free (or countdown until Quit Day), streak flame icon
@@ -201,13 +209,19 @@ Key modules (client):
 ## 10) Data Model (v1 client schema)
 UserProfile
 - id (string)
+- name (string)
 - createdAt (iso)
-- baseline: { cigsPerDay:number, packPrice:number, cigsPerPack:number=20, timeToFirst:number, yearsSmoking:number }
+- baseline: { cigsPerDay:number, packPrice:number, cigsPerPack:number=20, timeToFirst:number, yearsSmoking:number, firstCigaretteAge:number }
 - motivations: string[]
 - readiness:number (0-10), confidence:number (0-10)
 - triggers: string[]
 - quitPlan: { mode:"cold_turkey"|"reduction", quitDate:iso, tasks: Task[] }
-- preferences: { currency:string, notifications:boolean, quietHours:{start:number,end:number} }
+- preferences: { currency:string, notifications:boolean, notificationFrequency?:"daily"|"few_per_day"|"emergencies_only", preferredNotificationTimes?:number[], quietHours:{start:number,end:number} }
+- demographics?: { gender?:"male"|"female"|"non_binary"|"prefer_not_to_say", ageRange?:"under_18"|"18_24"|"25_34"|"35_44"|"45_54"|"55_plus" }
+- support: { hasSupporter:boolean, supporterName?:string, reminders:boolean }
+- healthConcerns?: string[]
+- pledgeAccepted?: boolean
+- subscriptionPlan?: "free"|"trial"|"monthly"|"annual"
 
 Task
 - id, title, dateDue: iso, completed:boolean, category:string
@@ -283,6 +297,7 @@ Payload standards: include userId (hashed), timestamp, screen, props.
 ---
 
 ## 17) Acceptance Criteria (examples)
+- User name is captured early and used throughout onboarding copy.
 - User can complete onboarding in <= 8 minutes with autosave.
 - User can set/edit a quit date and see countdown/days smoke-free.
 - Craving flow runs a timer and records intensity/trigger; data appears in insights.
@@ -294,7 +309,7 @@ Payload standards: include userId (hashed), timestamp, screen, props.
 
 ## 18) Implementation Guide for Current Repo (Expo)
 Screens to add under `app/`:
-- `app/onboarding/*` (stack): welcome, profile, dependence, triggers, motivations, quit_date, summary
+- `app/onboarding/*` (stack): welcome, name, profile, dependence, triggers, motivations, attempts, support, health, demographics, quit_date, goals, pledge, notifications, permissions, subscription, account, summary
 - `app/(tabs)/dashboard.tsx` (replace `index.tsx` if desired)
 - `app/craving/*`: timer, breathing, log
 - `app/plan/*`: checklist, tasks
@@ -312,20 +327,32 @@ State:
 ---
 
 ## 19) Onboarding Questionnaire (Field Spec)
+- name: string
+- firstCigaretteAge: number (8-30 typical)
 - cigsPerDay: number (0-60)
 - cigsPerPack: number (default 20)
 - packPrice: number (currency configurable)
 - timeToFirstCig: enum ["within_5m","5_30m","31_60m",">60m"]
 - yearsSmoking: number (0-60)
 - attemptsPastYear: number (0-10)
+- previousAttempts: { attempted:boolean, challenges?: string[], details?: string }
 - triggers: string[] (pre-set + custom)
 - motivations: string[] (top 3)
 - readiness: number (0-10)
 - confidence: number (0-10)
 - quitDate: iso
+- shortTermGoals?: string[]
 - planMode: enum ["cold_turkey","reduction"]
 - usingNRT: boolean; nrtTypes: string[]
 - hasSupporter: boolean; supporterName:string?; reminders:boolean
+- healthConcerns?: string[]; preferNotToSay?: boolean
+- gender?: enum ["male","female","non_binary","prefer_not_to_say"]
+- ageRange?: enum ["under_18","18_24","25_34","35_44","45_54","55_plus"]
+- notificationFrequency?: enum ["daily","few_per_day","emergencies_only"]
+- preferredNotificationTimes?: number[] (0-23 hours)
+- permissions: { pushAllowed?: boolean }
+- pledgeAccepted?: boolean
+- subscriptionPlan?: enum ["free","trial","monthly","annual"]
 
 ---
 
