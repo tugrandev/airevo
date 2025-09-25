@@ -1,0 +1,13 @@
+---
+alwaysApply: true
+description: High-level design principles for a minimal, cool, aesthetic Airevo app
+---
+# Design Principles
+- Clarity over decoration; keep only elements that guide a decision or action.
+- Calm confidence; neutral surfaces, limited accent, generous whitespace.
+- One primary action per screen; make the next step unmistakable.
+- Friendly, never cute; supportive tone without jokes or slang.
+- Accessible by default; contrast, touch targets, dynamic type, screen readers.
+- Offline-first UX; show state clearly and sync gracefully when online.
+
+See the full guide: [docs/rules.md](mdc:docs/rules.md)

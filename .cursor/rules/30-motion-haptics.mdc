@@ -1,0 +1,14 @@
+---
+globs: app/**/*.tsx,components/**/*.tsx
+description: Motion durations, easing, and haptics etiquette
+---
+# Motion & Haptics
+- Durations: 120ms (small), 180ms (medium), 240ms (large).
+- Easing: standard ease-in-out; spring only for micro-interactions.
+- Navigation transitions: subtle push/fade; no parallax.
+- Haptics:
+  - Light selection on toggles/tab switches.
+  - Success on pledge confirmed/badge earned.
+  - Warning on destructive actions.
+
+Reference: [docs/rules.md](mdc:docs/rules.md)

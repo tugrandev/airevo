@@ -1,0 +1,11 @@
+---
+globs: services/notifications.ts,app/**/*.tsx
+description: Notification cadence, quiet hours, and actionability
+---
+# Notifications
+- Default cadence: 1–2/day in week 1, then 0–1/day.
+- Respect user quiet hours; never break them.
+- Only send purposeful messages: cravings support, milestones, plan tasks.
+- Include an action (e.g., open breathing, start urge timer).
+
+Reference: [docs/rules.md](mdc:docs/rules.md)

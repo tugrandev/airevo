@@ -1,0 +1,23 @@
+---
+globs: app/**/*.tsx,components/**/*.tsx
+description: Component conventions for buttons, inputs, cards, lists, chips, progress, badges
+---
+# Components & UX
+- One primary button per screen. Secondary = outline; Tertiary = text-only.
+- Inputs: label above, inline validation, min tap 44x44.
+- Cards: group KPIs/checklists; low density; radius 12px; subtle Level 1 elevation.
+- Lists/Rows: title + optional meta + chevron when navigates; 56–64px height.
+- Chips/Tags: for triggers/motivations; wrap to 2 lines max.
+- Progress Ring: use for urge timer/milestones; avoid fullscreen spinners.
+- Badges: minimal glyph + short label; celebrate inline, avoid blocking modals.
+
+Screen guidance:
+- Onboarding: single-purpose steps, progress indicator, autosave, ask name early.
+- Dashboard: top stat (countdown/days smoke‑free), 3–4 KPIs max, 1–3 tasks, one lesson card.
+- Cravings: urge timer first, quick breathing/reframes, log outcome succinctly.
+
+Platform:
+- iOS: back swipe, large titles on top-level.
+- Android: ripple feedback, hardware back support.
+
+Reference: [docs/rules.md](mdc:docs/rules.md)

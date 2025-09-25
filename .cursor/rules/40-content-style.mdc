@@ -1,0 +1,12 @@
+---
+globs: app/**/*.tsx,docs/**/*.md
+description: Microcopy tone and style rules for UI strings and docs
+---
+# Content Style
+- Supportive mentor tone; direct and warm; avoid guilt/fear.
+- Use the user’s name when known; speak in “You”.
+- Brevity: titles ≤ 50 chars; body ≤ 140 chars per step.
+- Prefer numbers over vague adjectives (e.g., “3–5 minutes”).
+- Sentence case; emojis only in badges.
+
+Reference: [docs/rules.md](mdc:docs/rules.md)

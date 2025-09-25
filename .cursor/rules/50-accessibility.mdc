@@ -1,0 +1,12 @@
+---
+globs: *.tsx
+description: Accessibility requirements for React Native components
+---
+# Accessibility
+- Contrast: WCAG AA for all essential text/UI.
+- Tap targets ≥ 44x44.
+- Support Dynamic Type; avoid fixed-height text containers.
+- Provide accessibility labels/roles; ensure logical focus order.
+- Test with VoiceOver/TalkBack on key flows (onboarding, cravings, dashboard).
+
+Reference: [docs/rules.md](mdc:docs/rules.md)

@@ -1,0 +1,11 @@
+---
+globs: app/**/*.tsx,components/**/*.tsx
+description: Performance budgets and optimization patterns
+---
+# Performance
+- First interactive < 2s on mid-range devices.
+- Prefer vector assets; each PNG < 200KB.
+- Avoid unnecessary re-renders; memoize heavy components.
+- Virtualize lists > 20 items.
+
+Reference: [docs/rules.md](mdc:docs/rules.md)

@@ -1,0 +1,16 @@
+---
+globs: *.ts,*.tsx
+description: Enforce design tokens, theming, and dark mode usage
+---
+# Tokens & Theming Rules
+- Use tokens from the theme folder:
+  - Colors: `theme/colors.ts` (green primary `tint`, surfaces, text, border, status)
+  - Spacing: `theme/spacing.ts`
+  - Typography: `theme/typography.ts`
+  - Radius: `theme/radius.ts`
+- Import via `constants/theme.ts` where needed, and `use-theme-color` for runtime colors.
+- Never hard-code hex/rgb in components.
+- One accent color only (green-ish primary). Status colors for state only.
+- Implement dark mode via paired tokens; avoid inline color branching.
+
+References: [docs/rules.md](mdc:docs/rules.md), [`constants/theme.ts`](mdc:constants/theme.ts)
