@@ -6,7 +6,7 @@ import { useOnboardingStore } from '@/features/onboarding/store';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
-import { StyleSheet, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 
 const PRESETS = [
   'Reduce by 5/day',
@@ -31,39 +31,56 @@ export default function ShortTermGoalsScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <View style={styles.content}>
-        <ThemedText type="title">Set a few short‑term goals</ThemedText>
-        <View style={styles.chips}>
-          {PRESETS.map((p) => (
-            <Chip key={p} label={p} selected={selected.includes(p)} onPress={() => toggle(p)} />
-          ))}
+      <KeyboardAvoidingView 
+        style={styles.keyboardAvoidingView}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+      >
+        <ScrollView 
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.content}>
+            <ThemedText type="title">Set a few short‑term goals</ThemedText>
+            <View style={styles.chips}>
+              {PRESETS.map((p) => (
+                <Chip key={p} label={p} selected={selected.includes(p)} onPress={() => toggle(p)} />
+              ))}
+            </View>
+            <TextInput
+              accessibilityLabel="Custom goal"
+              style={[styles.input, { borderColor: border }]}
+              placeholder="Add your own (optional)"
+              value={custom}
+              onChangeText={setCustom}
+              autoFocus
+              returnKeyType="done"
+            />
+          </View>
+        </ScrollView>
+        <View style={styles.buttonContainer}>
+          <PrimaryButton
+            title="Continue"
+            onPress={() => {
+              const goals = custom.trim().length ? [...selected, custom.trim()] : selected;
+              update({ shortTermGoals: goals });
+              router.push('/onboarding/pledge');
+            }}
+            disabled={!canContinue}
+          />
         </View>
-        <TextInput
-          accessibilityLabel="Custom goal"
-          style={[styles.input, { borderColor: border }]}
-          placeholder="Add your own (optional)"
-          value={custom}
-          onChangeText={setCustom}
-          autoFocus
-          returnKeyType="done"
-        />
-      </View>
-      <PrimaryButton
-        title="Continue"
-        onPress={() => {
-          const goals = custom.trim().length ? [...selected, custom.trim()] : selected;
-          update({ shortTermGoals: goals });
-          router.push('/onboarding/pledge');
-        }}
-        disabled={!canContinue}
-      />
+      </KeyboardAvoidingView>
     </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, justifyContent: 'space-between' },
-  content: { gap: 12, marginTop: 24 },
+  container: { flex: 1 },
+  keyboardAvoidingView: { flex: 1 },
+  scrollContent: { flexGrow: 1, padding: 16 },
+  content: { gap: 12, marginTop: 24, flex: 1 },
+  buttonContainer: { padding: 16, paddingTop: 8 },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   input: { borderWidth: 1, borderRadius: 12, paddingHorizontal: 16, minHeight: 48 },
 });
